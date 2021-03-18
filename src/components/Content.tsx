@@ -6,6 +6,11 @@ import { api } from "../services/api";
 
 import '../styles/content.scss';
 
+interface ContentProps {
+  selectedGenre: any,
+  selectedGenreId: number,    
+}
+
 interface MovieProps {
   Title: string;
   Poster: string;
@@ -15,12 +20,14 @@ interface MovieProps {
   }>;
   Runtime: string;
 }
-  
-export function Content() {
+
+export function Content({selectedGenreId, selectedGenre, ...rest}: ContentProps) {
   // Complete aqui
-  const [selectedGenreId, setSelectedGenreId] = useState(1);   
+
+
 
   const [movies, setMovies] = useState<MovieProps[]>([]);
+
   useEffect(() => {
     api.get<MovieProps[]>(`movies/?Genre_id=${selectedGenreId}`).then(response => {
       setMovies(response.data);
@@ -28,19 +35,27 @@ export function Content() {
   }, [selectedGenreId]);
 
   return (
-    <div >
-      <main>
-        <div className="movies-list">
-          {movies.map(movie => (
-            <MovieCard 
-              title={movie.Title} 
-              poster={movie.Poster} 
-              runtime={movie.Runtime} 
-              rating={movie.Ratings[0].Value} 
-            />
-          ))}
-        </div>
-      </main>
-    </div>
+    <>  
+       <div className="container">
+        <header>
+            <span className="category">
+              Categoria:<span> {selectedGenre.title}</span>
+            </span>
+        </header>
+
+        <main>
+          <div className="movies-list">
+            {movies.map(movie => (
+              <MovieCard 
+                title={movie.Title} 
+                poster={movie.Poster} 
+                runtime={movie.Runtime} 
+                rating={movie.Ratings[0].Value} 
+              />
+            ))}
+          </div>
+        </main>
+      </div>
+    </>
   )
 }

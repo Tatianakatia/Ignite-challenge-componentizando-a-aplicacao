@@ -6,23 +6,29 @@ import { api } from "../services/api";
 
 import '../styles/sidebar.scss';
 
+interface SideBarProps {
+  selectedGenre: GenreResponseProps,
+  setSelectedGenre: any,
+  selectedGenreId: number,
+  setSelectedGenreId: any,
+}
+
 interface GenreResponseProps {
   id: number;
   name: 'action' | 'comedy' | 'documentary' | 'drama' | 'horror' | 'family';
   title: string;
 }
 
-export function SideBar() {
+export function SideBar({
+  selectedGenreId, 
+  setSelectedGenreId,
+  selectedGenre, 
+  setSelectedGenre,
+  ...rest}: SideBarProps
+) {
   // Complete aqui
-  const [selectedGenreId, setSelectedGenreId] = useState(1);
-  const [selectedGenre, setSelectedGenre] = useState<GenreResponseProps>({} as GenreResponseProps);
 
   const [genres, setGenres] = useState<GenreResponseProps[]>([]);
-
-  function handleClickButton(id: number) {
-    setSelectedGenreId(id);
-  }
-
  
   useEffect(() => {
     api.get<GenreResponseProps[]>('genres').then(response => {
@@ -36,28 +42,28 @@ export function SideBar() {
     })
   }, [selectedGenreId]);
 
-  return (
-    <div style={{ display: 'flex', flexDirection: 'row' }}>
-      <div className="container">
-        <header>
-          <span className="category">Categoria:<span> {selectedGenre.title}</span></span>
-        </header>
-        <nav className="sidebar">
-          <span>Watch<p>Me</p></span>
+  function handleClickButton(id: number) {
+    setSelectedGenreId(id);
+  }
 
-          <div className="buttons-container">
-            {genres.map(genre => (
-              <Button
-                id={String(genre.id)}
-                title={genre.title}
-                iconName={genre.name}
-                onClick={() => handleClickButton(genre.id)}
-                selected={selectedGenreId === genre.id}
-              />
-            ))}
-          </div>
-        </nav>
+  return (
+    <nav className="sidebar">
+      <span>Watch<p>Me</p></span>
+
+      <div className="buttons-container">
+        {genres.map(genre => (
+          <Button
+            id={String(genre.id)}
+            title={genre.title}
+            iconName={genre.name}
+            onClick={() => handleClickButton(genre.id)}
+            selected={selectedGenreId === genre.id}
+          />
+        ))}
       </div>
-    </div>
+  
+    </nav>
+  
+    
   )
 }
